@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link href="stylesheets/bootstrap.min.css" rel="stylesheet" media="screen">
+    <script src="http://cdn.static.runoob.com/libs/jquery/2.0.0/jquery.js"></script>
+    <script src="js/bootstrap.js"></script>
+    <script type="text/javascript" src="js/angular-1.4.6/angular.min.js"></script>
+    <script type="text/javascript" src="js/angular-1.4.6/angular-cookies.min.js"></script>
+
+    <title>Rayleigh Scattering</title>
+    <script>
+        var data = [["合肥",27,101001,14.8245,11.46],
+                    ["沙坪坝",259.1,98241.97,13.31585,11.20],
+                    ["福州",84,100319,14.454]]
+        var g = 9.7803;
+        var R = 287.05287;
+
+        function changeCity(newCity) {
+            $("#city").prop('value',newCity);
+
+            if(newCity != '未知'){
+                var newAltitude;
+                for(var i=0; i<data.length; i++){
+                    if(data[i][0] == newCity){
+                        //$("#altitude").prop('value',data[i][1]);
+                        $("#altitudeDiv").prop('hidden','hidden');
+                        $("#longitudeDiv").prop('hidden','hidden');
+                        $("#latitudeDiv").prop('hidden','hidden');
+                        break;
+                    }
+                }
+            }
+            else{
+                //$("#altitude").prop('value','');
+                $("#altitudeDiv").removeAttr('hidden');
+                $("#longitudeDiv").removeAttr('hidden');
+                $("#latitudeDiv").removeAttr('hidden');
+            }
+        }
+        var app = angular.module('ComputeApp',[]);
+        app.controller('submitController', function ($scope) {
+            $scope.submit = function () {
+                console.log("msg");
+                var nowC = $("#city").val();
+                var nowT = $("#temperature").val();
+                var nowP = $("#pressure").val();
+                var ray = 0.0;
+                console.log("nowC: "+nowC);
+                console.log("nowT: "+nowT);
+                console.log("nowP: "+nowP);
+
+                if(nowC =="未知"){
+                    var nowA = $("#altitude").val();
+                    var nowLO = $("#longitude").val();
+                    var nowLA = $("#latitude").val();
+                    console.log("nowA: "+nowA);
+                    console.log("nowLO: "+nowLO);
+                    console.log("nowLA: "+nowLA);
+
+                    var Ts = (15-nowA*0.65);
+                    var exp = (0-g*nowA)/(R*(Ts + 273.15));
+                    var Ps = 101325 * Math.exp(exp);
+                    var Bs = (11.49*Ps*288.15)/(101325*(Ts+273.15));
+                    console.log("nowTs: "+Ts);
+                    console.log("nowPs: "+Ps);
+                    console.log("nowBs: "+Bs);
+
+                    ray = Bs*nowP*Ts/Ps/nowT;
+                }
+                else{
+                    for(var i=0; i<data.length; i++){
+                        if(data[i][0] == nowC){
+                            console.log("findCity");
+                            ray = data[i][4]*nowP*data[i][3]/nowT/data[i][2];
+                        }
+                    }
+                }
+                console.log(ray);
+                $("#rayleigh").prop('value',ray);
+            }
+        })
+    </script>
+</head>
+<body>
+<div class="container">
+    <div class="row clearfix">
+        <div class="col-md-12 column">
+            <h3 class="text-center">
+                Rayleigh Scattering
+            </h3>
+        </div>
+    </div>
+    <div class="row clearfix">
+        <div class="col-md-2 column">
+        </div>
+        <div class="col-md-6 column" ng-app="ComputeApp">
+            <form class="form-horizontal" role="form" ng-controller="submitController">
+                <div class="form-group">
+                    <label for="city" class="col-sm-3 control-label">城市</label>
+                    <div class="col-sm-5">
+                        <div style="float:left">
+                            <input type="text" class="form-control" id="city" value="未知" disabled/>
+                        </div>
+                        <div class="input-group-btn" style="float:left">
+                            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                                <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu pull-right">
+                                <li>
+                                    <a onclick="changeCity('未知')">未知</a>
+                                </li>
+                                <li>
+                                    <a onclick="changeCity('合肥')">合肥</a>
+                                </li>
+                                <li>
+                                    <a onclick="changeCity('沙坪坝')">沙坪坝</a>
+                                </li>
+                            </ul>
+                        </div><!-- /btn-group -->
+                    </div><!-- /input-group -->
+                </div>
+                <div class="form-group" id="altitudeDiv">
+                    <label for="altitude" class="col-sm-3 control-label">海拔</label>
+                    <div class="col-sm-3">
+                        <input type="text" class="form-control" id="altitude" pattern="^(\d+\.?\d*|\d*\.?\d+)$" placeholder="请输入正实数"/>
+                    </div>
+                    <label for="altitude" class="control-label">米(m)</label>
+                </div>
+                <div class="form-group" id="longitudeDiv">
+                    <label for="longitude" class="col-sm-3 control-label">经度</label>
+                    <div class="col-sm-3">
+                        <input type="text" class="form-control" id="longitude" pattern="^(\d+\.?\d*|\d*\.?\d+)$" placeholder="请输入正实数"/>
+                    </div>
+                    <label for="altitude" class="control-label">分(')</label>
+                </div>
+                <div class="form-group" id="latitudeDiv">
+                    <label for="latitude" class="col-sm-3 control-label">纬度</label>
+                    <div class="col-sm-3">
+                        <input type="text" class="form-control" id="latitude" pattern="^(\d+\.?\d*|\d*\.?\d+)$]" placeholder="请输入正实数"/>
+                    </div>
+                    <label for="altitude" class="control-label">分(')</label>
+                </div>
+                <div class="form-group">
+                    <label for="temperature" class="col-sm-3 control-label">实时温度</label>
+                    <div class="col-sm-3">
+                        <input type="text" class="form-control" id="temperature" pattern="^(\d+\.?\d*|\d*\.?\d+)$" placeholder="请输入正实数"/>
+                    </div>
+                    <label for="altitude" class="control-label">开尔文(K)</label>
+                </div>
+                <div class="form-group">
+                    <label for="pressure" class="col-sm-3 control-label">实时压强</label>
+                    <div class="col-sm-3">
+                        <input type="text" class="form-control" id="pressure" pattern="^(\d+\.?\d*|\d*\.?\d+)$"  placeholder="请输入正实数"/>
+                    </div>
+                    <label for="altitude" class="control-label">帕斯卡(pa)</label>
+                </div>
+                <div class="form-group">
+                    <label for="rayleigh" class="col-sm-3 control-label">瑞利散射系数</label>
+                    <div class="col-sm-3">
+                        <input type="text" class="form-control" id="rayleigh" placeholder="等待计算" disabled/>
+                    </div>
+                    <label for="altitude" class="control-label"></label>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-offset-2 col-sm-10">
+                        <button ng-click="submit()" class="btn btn-default">Compute</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="col-md-4 column">
+        </div>
+    </div>
+</div>
+</body>
+</html>

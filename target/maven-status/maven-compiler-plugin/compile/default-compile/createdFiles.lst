@@ -1,0 +1,10 @@
+searchEngine/repository/TaskRepository.class
+searchEngine/Service/TaskServiceImpl.class
+searchEngine/controller/TaskController.class
+searchEngine/model/Response.class
+searchEngine/Config/KafkaProducerConfig.class
+searchEngine/Config/Listener.class
+searchEngine/model/Task.class
+searchEngine/Config/KafkaConsumerConfig.class
+searchEngine/Service/TaskService.class
+searchEngine/SearchEngineApplication.class

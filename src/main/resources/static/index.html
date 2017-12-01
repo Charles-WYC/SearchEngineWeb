@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link href="stylesheets/bootstrap.min.css" rel="stylesheet" media="screen">
+    <link href="stylesheets/bootstrap-datetimepicker.min.css" rel="stylesheet" media="screen">
+
+    <script type="text/javascript" src="js/angular-1.4.6/angular.min.js"></script>
+    <script type="text/javascript" src="js/angular-1.4.6/angular-cookies.min.js"></script>
+
+    <script src="http://cdn.static.runoob.com/libs/jquery/2.0.0/jquery.js"></script>
+    <script src="js/bootstrap.js"></script>
+    <script src="js/bootstrap-datetimepicker.js" type="text/javascript"></script>
+    <script src="js/bootstrap-datetimepicker.zh-CN.js" type="text/javascript"></script>
+    <script src="js/bootstrap-datetimepicker.fr.js" type="text/javascript"></script>
+    <script src="js/request.js"></script>
+    <script>
+        var data = new Array();
+
+        var selectTime = 'All';
+        var selectStatus = 'All';
+        var selectReferer = 'All';
+        var selectCreater = 'All';
+
+        function createTR(tbody, data) {
+            var $tr;
+            switch(data[4]){
+                case "成功":
+                    $tr = $('<tr class="success"></tr>');
+                    break;
+                case "失败":
+                    $tr = $('<tr class="warning"></tr>');
+                    break;
+                case "处理中":
+                    $tr = $('<tr class="info"></tr>');
+                    break;
+                default:
+                    $tr = $('<tr></tr>');
+                    break;
+            }
+            for(var i=0; i<data.length; i++){
+                if(i==2){
+                    var $td = $('<td align="center">'+data[i]+'</td>');
+                }
+                else {
+                    var $td = $('<td >' + data[i] + '</td>');
+                }
+                $tr.append($td);
+            }
+            $(tbody).append($tr);
+        }
+        function createTbody() {
+            var tr1 = new Array("https://www.test.com/test1","ieeexplore.ieee.org","2017-08-03","管理员","成功");
+            var tr2 = new Array("https://www.test.com/test2","dl.acm.org","2017-08-01","管理员","失败");
+            var tr3 = new Array("https://www.test.com/test3","ieeexplore.ieee.org","2017-08-02","自增","处理中");
+            var tr4 = new Array("https://www.test.com/test4","dl.acm.org","2017-08-03","自增","待处理");
+            data = new Array(tr1, tr2, tr3, tr4);
+
+            selectTime = 'All';
+            selectStatus = 'All';
+            selectReferer = 'All';
+            selectCreater = 'All';
+
+            $("#myTbody").empty();
+            for(var i=0; i<data.length; i++){
+                createTR("#myTbody", data[i]);
+            }
+        }
+        function selectWithStatus() {
+            var tempData = new Array();
+            var finalData = new Array();
+            tempData = data;
+            for(var i =0; i<tempData.length; i++){
+                if(selectReferer == 'All'){
+                    finalData.push(tempData[i]);
+                }
+                else{
+                    if(tempData[i][1] == selectReferer){
+                        finalData.push(tempData[i]);
+                    }
+                }
+            }
+            console.log(finalData.length);
+            tempData = finalData;
+            var finalData = new Array();
+            console.log('finish copy')
+            for(var i =0; i<tempData.length; i++){
+                if(selectTime == 'All'){
+                    finalData.push(tempData[i]);
+                }
+                else{
+                    if(tempData[i][2] == selectTime){
+                        console.log(tempData[i][0]);
+                        console.log(tempData[i][2]);
+                        console.log(selectTime)
+                        finalData.push(tempData[i]);
+                    }
+                }
+            }
+            console.log(finalData.length);
+            tempData = finalData;
+            var finalData = new Array();
+            for(var i =0; i<tempData.length; i++){
+                if(selectCreater == 'All'){
+                    finalData.push(tempData[i]);
+                }
+                else{
+                    if(tempData[i][3] == selectCreater){
+                        finalData.push(tempData[i]);
+                    }
+                }
+            }
+            console.log(finalData.length);
+            tempData = finalData;
+            var finalData = new Array();
+            for(var i =0; i<tempData.length; i++){
+                if(selectStatus == 'All'){
+                    finalData.push(tempData[i]);
+                }
+                else{
+                    if(tempData[i][4] == selectStatus){
+                        finalData.push(tempData[i]);
+                    }
+                }
+            }
+            console.log(finalData.length);
+            $("#myTbody").empty();
+            for(var i=0; i<finalData.length;i++){
+                createTR("#myTbody", finalData[i]);
+            }
+        }
+
+        function changeSelectInfo(index,info) {
+            switch(index){
+                case 1:
+                    selectReferer = info;
+                    selectWithStatus();
+                    break;
+                case 2:
+                    selectTime = info;
+                    if(info == 'All'){
+                        $(".form_datetime").val('');
+                    }
+                    selectWithStatus();
+                    break;
+                case  3:
+                    selectCreater = info;
+                    selectWithStatus();
+                    break;
+                case 4:
+                    selectStatus = info;
+                    selectWithStatus();
+                    break;
+            }
+        }
+    </script>
+    <title>SearchEngine</title>
+</head>
+<body>
+<div class="container">
+    <div class="row clearfix">
+        <div class="col-md-12 column">
+            <p><br/></p>
+            <h3 class="text-center">
+                Search Engine Managment Platform
+            </h3>
+            <p><br/></p>
+        </div>
+    </div>
+    <div class="row clearfix">
+        <div class="col-md-12 column">
+            <div class="tabbable" id="tabs-191343">
+                <ul class="nav nav-tabs">
+                    <li class="active">
+                        <a href="#panel-207878" data-toggle="tab">创建请求</a>
+                    </li>
+                    <li>
+                        <a href="#panel-856506" data-toggle="tab">查询状态</a>
+                    </li>
+                    <li>
+                        <a href="#panel-856507" data-toggle="tab">请求详情</a>
+                    </li>
+                    <li>
+                        <a href="#panel-856508" data-toggle="tab">创建Parser</a>
+                    </li>
+                    <li>
+                        <a href="#panel-856509" data-toggle="tab">管理Parser</a>
+                    </li>
+                </ul>
+                <div class="tab-content">
+                    <div class="tab-pane active" id="panel-207878" ng-app="requestApp">
+                        <div class="row clearfix">
+                            <div class="col-md-12 column">
+                                <p></p>
+                            </div>
+                        </div>
+                        <div class="row clearfix">
+                            <div class="col-md-12 column" ng-controller="submitController">
+                                <p><br/></p>
+                                <form role="form" class="form-horizontal">
+                                    <div class="form-group">
+                                        <label for="NewRequestUrl" class="col-sm-2 control-label">New Request Url</label>
+                                        <div class="col-sm-5">
+                                            <input class="form-control" id="NewRequestUrl" ng-model="NewRequestUrl" type="text"/>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="NewSuggestParser" class="col-sm-2 control-label">Suggest Parser</label>
+                                        <div class="btn-group col-sm-5">
+                                            <button class="btn btn-default" id="NewSuggestParser">AutoParser</button> <button class="btn btn-default dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
+                                            <ul class="dropdown-menu">
+                                                <li>
+                                                    <a>ACMParser</a>
+                                                </li>
+                                                <li>
+                                                    <a>IEEEParser</a>
+                                                </li>
+                                                <li>
+                                                    <a>AutoParser</a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="NewRequestCreator" class="col-sm-2 control-label">Creator</label>
+                                        <div class="col-sm-5">
+                                            <button class="btn btn-default disabled" type="button"id ="NewRequestCreator">管理员</button>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="NewRequestAnnotation" class="col-sm-2 control-label">Annotation</label>
+                                        <div class="col-sm-10">
+                                            <input class="form-control" id="NewRequestAnnotation" value = "Request Annotation here" type="text" style="height: 150px"/>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-sm-offset-2 col-sm-10">
+                                            <button type="submit" class="btn btn-default" ng-click="submit()">Submit</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane" id="panel-856506">
+                        <p><br/></p>
+                        <table class="table table-hover">
+                            <thead>
+                            <tr align="center">
+                                <th width="25%" align="center">
+                                    <button class="btn btn-default" onclick="createTbody()">Renew</button><button class="btn btn-default disabled" type="button">RequestUrl</button>
+                                </th>
+                                <th width="20%">
+                                    <div class="btn-group">
+                                        <button class="btn btn-default">Referer</button> <button class="btn btn-default dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
+                                        <ul class="dropdown-menu">
+                                            <li>
+                                                <a onclick="changeSelectInfo(1,'ieeexplore.ieee.org')">ieeexplore.ieee.org</a>
+                                            </li>
+                                            <li>
+                                                <a onclick="changeSelectInfo(1,'dl.acm.org')">dl.acm.org</a>
+                                            </li>
+                                            <li>
+                                                <a onclick="changeSelectInfo(1,'All')">All</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </th>
+                                <th width="25%">
+                                    <div class="input-group">
+                                        <button class="btn btn-default" onclick="changeSelectInfo(2,'All')">Time</button> <input class="btn btn-default dropdown-toggle form_datetime" data-toggle="dropdown">
+                                    </div>
+                                </th>
+                                <th width="15%">
+                                    <div class="btn-group">
+                                        <button class="btn btn-default">创建者</button> <button class="btn btn-default dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
+                                        <ul class="dropdown-menu">
+                                            <li>
+                                                <a onclick="changeSelectInfo(3,'管理员')">管理员</a>
+                                            </li>
+                                            <li>
+                                                <a onclick="changeSelectInfo(3,'自增')">自增</a>
+                                            </li>
+                                            <li>
+                                                <a onclick="changeSelectInfo(3,'All')">All</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </th>
+                                <th width="15%">
+                                    <div class="btn-group">
+                                        <button class="btn btn-default">状态</button> <button class="btn btn-default dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
+                                        <ul class="dropdown-menu">
+                                            <li>
+                                                <a onclick="changeSelectInfo(4,'成功')">成功</a>
+                                            </li>
+                                            <li>
+                                                <a onclick="changeSelectInfo(4,'失败')">失败</a>
+                                            </li>
+                                            <li>
+                                                <a onclick="changeSelectInfo(4,'处理中')">处理中</a>
+                                            </li>
+                                            <li>
+                                                <a onclick="changeSelectInfo(4,'待处理')">待处理</a>
+                                            </li>
+                                            <li>
+                                                <a onclick="changeSelectInfo(4,'All')">All</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </th>
+                            </tr>
+                            </thead>
+                            <tbody id = "myTbody">
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="tab-pane" id="panel-856507">
+                        <div class="row clearfix">
+                            <div class="col-md-12 column">
+                                <p></p>
+                            </div>
+                        </div>
+                        <div class="row clearfix">
+                            <div class="col-md-12 column">
+                                <p><br/></p>
+                                <form role="form" class="form-horizontal">
+                                    <div class="form-group">
+                                        <label for="detailRequestUrl" class="col-sm-2 control-label">Request Url</label>
+                                        <div class="col-sm-5">
+                                            <input class="form-control" id="detailRequestUrl" type="text" value="www.example.com"/>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="detailParser" class="col-sm-2 control-label">Parser</label>
+                                        <div class="btn-group col-sm-5">
+                                            <button class="btn btn-default" id="detailParser">AutoParser</button> <button class="btn btn-default dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
+                                            <ul class="dropdown-menu">
+                                                <li>
+                                                    <a>ACMParser</a>
+                                                </li>
+                                                <li>
+                                                    <a>IEEEParser</a>
+                                                </li>
+                                                <li>
+                                                    <a>AutoParser</a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="detailCreator" class="col-sm-2 control-label">Creator</label>
+                                        <div class="col-sm-5">
+                                            <button class="btn btn-default disabled" type="button"id ="detailCreator">管理员</button>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="detailPageContent" class="col-sm-2 control-label">Page Content</label>
+                                        <div class="col-sm-10">
+                                            <input class="form-control" id="detailPageContent" value = "source code here" type="text" style="height: 200px" readonly/>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="detailParseResult" class="col-sm-2 control-label">Parse Result</label>
+                                        <div class="col-sm-10">
+                                            <input class="form-control" id="detailParseResult" value = "Parse Result here" type="text" style="height: 150px" readonly/>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-sm-offset-2 col-sm-10">
+                                            <button type="submit" class="btn btn-default">保存修改</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane" id="panel-856508">
+                        <div class="row clearfix">
+                            <div class="col-md-12 column">
+                                <p></p>
+                            </div>
+                        </div>
+                        <div class="row clearfix">
+                            <div class="col-md-12 column">
+                                <p><br/></p>
+                                <form role="form" class="form-horizontal">
+                                    <div class="form-group">
+                                        <label for="NewParserName" class="col-sm-2 control-label">New Parser Name</label>
+                                        <div class="col-sm-5">
+                                            <input class="form-control" id="NewParserName" type="text"/>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="NewParserInputFile" class="col-sm-2 control-label">Parser File</label>
+                                        <div class="btn-group col-sm-5">
+                                            <input type="file" id="NewParserInputFile" />
+                                            <p class="help-block">
+                                                Plesae upload your new parser file here.
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="NewParserCreator" class="col-sm-2 control-label">Creator</label>
+                                        <div class="col-sm-5">
+                                            <button class="btn btn-default disabled" type="button"id ="NewParserCreator">管理员</button>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="NewParserAnnotation" class="col-sm-2 control-label">Annotation</label>
+                                        <div class="col-sm-10">
+                                            <input class="form-control" id="NewParserAnnotation" value = "new Parser Annotation here" type="text" style="height: 150px"/>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-sm-offset-2 col-sm-10">
+                                            <button type="submit" class="btn btn-default">Submit</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane" id="panel-856509">
+                        <div class="row clearfix">
+                            <div class="col-md-12 column">
+                                <p></p>
+                            </div>
+                        </div>
+                        <div class="row clearfix">
+                            <div class="col-md-12 column">
+                                <table class="table table-hover">
+                                    <thead>
+                                    <tr>
+                                        <th>
+                                            Parser Name
+                                        </th>
+                                        <th>
+                                            Creator
+                                        </th>
+                                        <th>
+                                            Create Date
+                                        </th>
+                                        <th>
+                                            Operation
+                                        </th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr>
+                                        <td>
+                                            ACMPaperParser
+                                        </td>
+                                        <td>
+                                            管理员
+                                        </td>
+                                        <td>
+                                            2017-8-3
+                                        </td>
+                                        <td>
+                                            <div class="btn-group">
+                                                <button class="btn btn-default" type="button">删除</button><button class="btn btn-default" type="button">重命名</button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            ACMConferenceParser
+                                        </td>
+                                        <td>
+                                            管理员
+                                        </td>
+                                        <td>
+                                            2017-8-3
+                                        </td>
+                                        <td>
+                                            <div class="btn-group">
+                                                <button class="btn btn-default" type="button">删除</button><button class="btn btn-default" type="button">重命名</button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            ACMHomePageParser
+                                        </td>
+                                        <td>
+                                            管理员
+                                        </td>
+                                        <td>
+                                            2017-8-3
+                                        </td>
+                                        <td>
+                                            <div class="btn-group">
+                                                <button class="btn btn-default" type="button">删除</button><button class="btn btn-default" type="button">重命名</button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            ACMPeriodicalParser
+                                        </td>
+                                        <td>
+                                            管理员
+                                        </td>
+                                        <td>
+                                            2017-8-3
+                                        </td>
+                                        <td>
+                                            <div class="btn-group">
+                                                <button class="btn btn-default" type="button">删除</button><button class="btn btn-default" type="button">重命名</button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            IEEEConferenceParser
+                                        </td>
+                                        <td>
+                                            管理员
+                                        </td>
+                                        <td>
+                                            2017-8-3
+                                        </td>
+                                        <td>
+                                            <div class="btn-group">
+                                                <button class="btn btn-default" type="button">删除</button><button class="btn btn-default" type="button">重命名</button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            IEEEPaperParser
+                                        </td>
+                                        <td>
+                                            管理员
+                                        </td>
+                                        <td>
+                                            2017-8-3
+                                        </td>
+                                        <td>
+                                            <div class="btn-group">
+                                                <button class="btn btn-default" type="button">删除</button><button class="btn btn-default" type="button">重命名</button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            IEEEPeriodicalParser
+                                        </td>
+                                        <td>
+                                            管理员
+                                        </td>
+                                        <td>
+                                            2017-8-3
+                                        </td>
+                                        <td>
+                                            <div class="btn-group">
+                                                <button class="btn btn-default" type="button">删除</button><button class="btn btn-default" type="button">重命名</button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    $('.form_datetime').datetimepicker({
+        minView: "month", //选择日期后，不会再跳转去选择时分秒
+        language:  'zh-CN',
+        format: 'yyyy-mm-dd',
+        todayBtn:  1,
+        autoclose: 1,
+        todayHighlight: 1,
+        startView: 2,
+        forceParse: 0
+    })
+        .on('changeDate', function(ev){
+            var time = $(".form_datetime").val();
+            changeSelectInfo(2,time)
+        });
+</script>
+</body>
+</html>
